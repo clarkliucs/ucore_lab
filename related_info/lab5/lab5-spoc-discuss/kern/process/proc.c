@@ -737,6 +737,7 @@ repeat:
     return -E_BAD_PROC;
 
 found:
+	print_stackframe();
     if (proc == idleproc || proc == initproc) {
         panic("wait idleproc or initproc.\n");
     }
