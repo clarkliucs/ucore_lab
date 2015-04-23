@@ -56,21 +56,39 @@ class scheduler:
     #if pid==-1, then pid=self.curr_proc
     def move_to_ready(self, expected, pid=-1):
         #YOUR CODE
+        assert expected != STATE_DONE
+        if pid == -1:
+            pid = self.curr_proc
+        self.proc_info[pid][PROC_STATE] = STATE_READY
         return
 
     #change to RUNNING STATE, the current proc's state should be expected
     def move_to_running(self, expected):
         #YOUR CODE
+        assert expected == STATE_READY
+        self.proc_info[self.curr_proc][PROC_STATE] = STATE_RUNNING
         return
 
     #change to DONE STATE, the current proc's state should be expected
     def move_to_done(self, expected):
         #YOUR CODE
+        assert expected == STATE_RUNNING
+        self.proc_info[self.curr_proc][PROC_STATE] = STATE_DONE
         return
 
     #choose next proc using FIFO/FCFS scheduling, If pid==-1, then pid=self.curr_proc
     def next_proc(self, pid=-1):
         #YOUR CODE
+        if pid == -1:
+            pid = self.curr_proc
+        num_process = len(self.proc_info)
+
+        for i in range(0,num_process-1) :
+          if self.proc_info[i][PROC_STATE] == STATE_READY and i != self.curr_proc:
+            self.curr_proc = i
+            
+        if self.proc_info[self.curr_proc][PROC_STATE] != STATE_DONE :
+            self.proc_info[self.curr_proc][PROC_STATE] = STATE_RUNNING
         return
 
     def get_num_processes(self):

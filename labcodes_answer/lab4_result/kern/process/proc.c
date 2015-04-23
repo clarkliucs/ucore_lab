@@ -221,6 +221,8 @@ find_proc(int pid) {
 int
 kernel_thread(int (*fn)(void *), void *arg, uint32_t clone_flags) {
     struct trapframe tf;
+    // cprintf("my pid %d\n", current->pid);
+    // cprintf("my mm %x\n", current->mm);
     memset(&tf, 0, sizeof(struct trapframe));
     tf.tf_cs = KERNEL_CS;
     tf.tf_ds = tf.tf_es = tf.tf_ss = KERNEL_DS;
@@ -360,6 +362,7 @@ init_main(void *arg) {
     cprintf("this initproc, pid = %d, name = \"%s\"\n", current->pid, get_proc_name(current));
     cprintf("To U: \"%s\".\n", (const char *)arg);
     cprintf("To U: \"en.., Bye, Bye. :)\"\n");
+    // cprintf("current mm is %x\n", current->mm);
     return 0;
 }
 
