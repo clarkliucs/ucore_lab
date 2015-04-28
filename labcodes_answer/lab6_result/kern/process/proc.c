@@ -499,8 +499,9 @@ do_exit(int error_code) {
         }
     }
     local_intr_restore(intr_flag);
-    
+    cprintf(" schedule in do_exit :: pid %d to ",current->pid);
     schedule();
+    cprintf(" pid %d \n ",current->pid);
     panic("do_exit will not return!! %d.\n", current->pid);
 }
 
@@ -734,7 +735,9 @@ repeat:
     if (haskid) {
         current->state = PROC_SLEEPING;
         current->wait_state = WT_CHILD;
+        cprintf(" schedule in do_wait :: pid %d to ",current->pid);
         schedule();
+        cprintf(" pid %d \n ",current->pid);
         if (current->flags & PF_EXITING) {
             do_exit(-E_KILLED);
         }
@@ -827,12 +830,15 @@ init_main(void *arg) {
     size_t kernel_allocated_store = kallocated();
 
     int pid = kernel_thread(user_main, NULL, 0);
+    pid = kernel_thread(user_main, NULL, 0);
     if (pid <= 0) {
         panic("create user_main failed.\n");
     }
 
     while (do_wait(0, NULL) == 0) {
+    	cprintf(" schedule in init_main :: pid %d to ",current->pid);
         schedule();
+        cprintf(" pid %d \n ",current->pid);
     }
 
     cprintf("all user-mode processes have quit.\n");
@@ -887,7 +893,9 @@ void
 cpu_idle(void) {
     while (1) {
         if (current->need_resched) {
+        	cprintf(" schedule in cpu_idle :: pid %d to ",current->pid);
             schedule();
+            cprintf(" pid %d \n ",current->pid);
         }
     }
 }
