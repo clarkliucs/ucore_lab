@@ -56,7 +56,7 @@ idt_init(void) {
     extern uintptr_t __vectors[];
     
     int i;
-    for (i=0; i<256; i++)
+    for (i=0; i<sizeof(idt) / sizeof(struct gatedesc); i++)
         SETGATE(idt[i], 0, GD_KTEXT, __vectors[i], DPL_KERNEL);
     SETGATE(idt[T_SWITCH_TOK], 0, GD_KTEXT, __vectors[T_SWITCH_TOK], DPL_USER);
     lidt(&idt_pd);
@@ -227,8 +227,11 @@ trap_dispatch(struct trapframe *tf) {
          * (3) Too Simple? Yes, I think so!
          */
         ticks++;
-        if (ticks%TICK_NUM == 0)
-            print_ticks();
+        if (ticks%TICK_NUM == 0){
+            // print_ticks();
+            assert(current != NULL);
+            current->need_resched = 1;
+        }
         /* LAB5 2012011300 */
         /* you should upate you lab1 code (just add ONE or TWO lines of code):
          *    Every TICK_NUM cycle, you should set current process's current->need_resched = 1
